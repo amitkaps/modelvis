@@ -82,9 +82,11 @@ def _make_mesh(X, y, n=100):
     dx = (x_max - x_min)/n
     dy = (y_max - y_min)/n
 
+    # Fixed the issue of blank screen at the edges
+    # by adding some cushion on all the edges.
     xx, yy = np.meshgrid(
-        np.arange(x_min, x_max, dx),
-        np.arange(y_min, y_max, dy))
+        np.arange(x_min-5*dx, x_max+5*dx, dx),
+        np.arange(y_min-5*dy, y_max+5*dy, dy))
 
     return xx, yy
 
