@@ -3,10 +3,8 @@ Visualising Machine Learning Models
 """
 
 import numpy as np
-import pandas as pd
 import matplotlib.pyplot as plt
-from sklearn.tree import DecisionTreeClassifier, export_graphviz
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.tree import export_graphviz
 from IPython.display import SVG
 import requests
 import seaborn as sns
@@ -14,20 +12,44 @@ import seaborn as sns
 __version__ = "0.1.2"
 __author__ = "Amit Kapoor <amitkaps@gmail.com>"
 
-def plot_classifier_2d(clf, data, target, probability = False, alpha = 0.9):
-    x_min, x_max = data.iloc[:,0].min(), data.iloc[:,0].max()
-    y_min, y_max = data.iloc[:,1].min(), data.iloc[:,1].max()
+def plot_decision_boundaries(model, X, y,
+    probability=False, show_input=False, alpha=0.5):
+    """Plots the decision boundaries for a classifier with 2 features.
+
+    This is good way to visualize the decision boundaries of various classifiers
+    to build intution about them.
+
+    It is assumed that the model is already trained.
+
+    :param model: the classification model
+    :param X: the training input samples
+    :param y: the target values
+    :param probability: flag to indicate whether to plot class predictions or probabilities
+    :param show_input: flag to indicate whether or not to show input points
+    :param alpha: the alpha value for the plots
+    """
+
+    x_min, x_max = X.iloc[:,0].min(), X.iloc[:,0].max()
+    y_min, y_max = X.iloc[:,1].min(), X.iloc[:,1].max()
+
     xx, yy = np.meshgrid(
         np.arange(x_min, x_max, (x_max - x_min)/100),
         np.arange(y_min, y_max, (y_max - y_min)/100))
-    if probability == False:
-        Z = clf.predict(np.c_[xx.ravel(), yy.ravel()])
+
+    mesh = np.c_[xx.ravel(), yy.ravel()]
+
+    if probability:
+        Z = model.predict_proba(mesh)[:,0]
     else:
-        Z = clf.predict_proba(np.c_[xx.ravel(), yy.ravel()])[:,0]
+        Z = model.predict(mesh)
+
     Z = Z.reshape(xx.shape)
-    cs = plt.contourf(xx, yy, Z, cmap="viridis", alpha = 0.5)
+    cs = plt.contourf(xx, yy, Z, cmap="viridis", alpha=alpha)
+
     plt.colorbar(cs)
-    plt.scatter(x = data.iloc[:,0], y = data.iloc[:,1], c = target, s = 100, cmap="magma", alpha = alpha)
+    if show_input:
+        plt.scatter(x = X.iloc[:,0], y = X.iloc[:,1], c=y,
+            s=20, cmap="magma", alpha=alpha)
 
 def render_tree(decision_tree, feature_names=None, class_names=None, **kwargs):
     """Returns a PIL image to visualize given DecisionTree model.
