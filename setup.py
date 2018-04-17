@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
   name="modelvis",
-  version="0.1.2",
+  version="0.1.3",
   description="Visualising Machine Learning Model",
   license="MIT",
   install_requires=[
