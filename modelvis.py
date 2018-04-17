@@ -11,8 +11,9 @@ import requests
 import seaborn as sns
 import io
 
-__version__ = "0.1.2"
+__version__ = "0.1.5"
 __author__ = "Amit Kapoor <amitkaps@gmail.com>"
+
 
 def plot_decision_boundaries(model, X, y,
     probability=False, show_input=False,
@@ -158,6 +159,13 @@ def plot_probabilities(model, X, y, class_names=None):
     plot(0)
     plot(1)
 
+def confusion_matrix(model, X, y):
+    y_pred = model.predict(X)
+    df = pd.DataFrame({
+        "actual": np.array(y),
+        "predicted": y_pred})
+    return pd.crosstab(df.predicted, df.actual)
+
 def render_tree_as_code(decision_tree):
     """Converts a decision tree to equivalant python code.
 
@@ -208,3 +216,4 @@ def print_tree_as_code(decision_tree):
 
 if __name__ == "__main__":
     print("welcome to model visualisation")
+
