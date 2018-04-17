@@ -121,7 +121,8 @@ def render_tree_as_code(decision_tree):
     buf = io.StringIO()
     def xprint(*args, depth=0):
         indent = "    " * depth
-        print(indent, *args, file=buf)
+        print(indent, end="", file=buf)
+        print(*args, file=buf)
 
     def print_node(tree, node, depth):
         col = tree.feature[node]
