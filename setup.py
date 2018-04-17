@@ -9,7 +9,8 @@ setup(
     'numpy',
     'pandas',
     'scikit-learn',
-    'matplotlib'
+    'matplotlib',
+    'requests'
   ],
   py_modules=['modelvis'],
   author="Amit Kapoor",
