@@ -10,7 +10,8 @@ setup(
     'pandas',
     'scikit-learn',
     'matplotlib',
-    'requests'
+    'requests',
+    'seaborn'
   ],
   py_modules=['modelvis'],
   author="Amit Kapoor",

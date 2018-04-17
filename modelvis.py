@@ -9,6 +9,7 @@ from sklearn.tree import DecisionTreeClassifier, export_graphviz
 from sklearn.ensemble import RandomForestClassifier
 from IPython.display import SVG
 import requests
+import seaborn as sns
 
 __version__ = "0.1.2"
 __author__ = "Amit Kapoor <amitkaps@gmail.com>"
@@ -63,6 +64,31 @@ def render_tree(decision_tree, feature_names=None, class_names=None, **kwargs):
     url = "http://gvaas.herokuapp.com/dot"
     svgtext = requests.post(url, data=dot, headers=headers).text
     return SVG(svgtext)
+
+def plot_probabilities(model, X, y, class_names=None):
+    """Plots the probabilities of each class using kdeplot.
+
+    It is assumed that the model is already trained.
+
+    :param model: the ML model
+    :param X: the input data
+    :param y: the classes
+    :param class_names: the class labels
+    """
+    y_pred = model.predict(X)
+    y_proba = model.predict_proba(X)[:,1]
+    pred_df = pd.DataFrame({
+        "actual": np.array(y),
+        "predicted": y_pred,
+        "probability": y_proba})
+
+    def plot(class_):
+        df = pred_df[pred_df.actual == class_]
+        label = class_names and class_names[class_] or class_
+        sns.kdeplot(df.probability, shade=True, label=label)
+
+    plot(0)
+    plot(1)
 
 if __name__ == "__main__":
     print("welcome to model visualisation")
