@@ -8,6 +8,7 @@ from sklearn.tree import export_graphviz
 from IPython.display import SVG
 import requests
 import seaborn as sns
+import io
 
 __version__ = "0.1.2"
 __author__ = "Amit Kapoor <amitkaps@gmail.com>"
@@ -108,6 +109,53 @@ def plot_probabilities(model, X, y, class_names=None):
 
     plot(0)
     plot(1)
+
+def render_tree_as_code(decision_tree):
+    """Converts a decision tree to equivalant python code.
+
+    Useful to intutively understand how decision trees work.
+
+    :param decision_tree: the decision tree model
+    :return: equivalant python code
+    """
+    buf = io.StringIO()
+    def xprint(*args, depth=0):
+        indent = "    " * depth
+        print(indent, *args, file=buf)
+
+    def print_node(tree, node, depth):
+        col = tree.feature[node]
+        counts = tree.value[node][0]
+        int_counts = [int(x) for x in counts]
+        samples = int(counts.sum())
+        class_ = tree.value[node].argmax()
+        threshold = tree.threshold[node]
+        left = tree.children_left[node]
+        right = tree.children_right[node]
+
+        xprint("# {} samples; value={}; class={}".format(samples, int_counts, class_), depth=depth)
+        if col == -2:
+            xprint("return", class_, depth=depth)
+            return
+
+        xprint('if row[{col}] < {threshold}:'.format(col=col, threshold=threshold), depth=depth)
+        print_node(tree, left, depth+1)
+        xprint('else:', depth=depth)
+        print_node(tree, right, depth+1)
+
+    tree = decision_tree.tree_
+    xprint("def predict(row):")
+    xprint('    """Your decision-tree model wrote this code."""')
+    print_node(tree, 0, 1)
+    return buf.getvalue()
+
+def print_tree_as_code(decision_tree):
+    """Prints the python code equivalant of the decision tree model.
+
+    :param decision_tree: the decision tree model
+    """
+    code = render_tree_as_code(decision_tree)
+    print(code)
 
 if __name__ == "__main__":
     print("welcome to model visualisation")
