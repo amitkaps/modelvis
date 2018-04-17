@@ -68,24 +68,21 @@ def render_tree(decision_tree, feature_names=None, class_names=None, **kwargs):
 def plot_probabilities(model, X, y, class_names=None):
     """Plots the probabilities of each class using kdeplot.
 
-    It is assumed that the model is already trained.
+    It is assumed that the model is already trained and works only
+    for 2-classes.
 
     :param model: the ML model
     :param X: the input data
     :param y: the classes
-    :param class_names: the class labels
+    :param class_names: optional class labels
     """
-    y_pred = model.predict(X)
-    y_proba = model.predict_proba(X)[:,1]
-    pred_df = pd.DataFrame({
-        "actual": np.array(y),
-        "predicted": y_pred,
-        "probability": y_proba})
+    y = np.array(y)
+    proba = model.predict_proba(X)[:,0]
 
-    def plot(class_):
-        df = pred_df[pred_df.actual == class_]
-        label = class_names and class_names[class_] or class_
-        sns.kdeplot(df.probability, shade=True, label=label)
+    def plot(index):
+        p = proba[y == index]
+        label = class_names and class_names[index] or index
+        sns.kdeplot(p, shade=True, label=label)
 
     plot(0)
     plot(1)
