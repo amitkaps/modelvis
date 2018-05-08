@@ -11,7 +11,7 @@ import requests
 import seaborn as sns
 import io
 
-__version__ = "0.1.5"
+__version__ = '0.1.5'
 __author__ = "Amit Kapoor <amitkaps@gmail.com>"
 
 
