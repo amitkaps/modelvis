@@ -11,13 +11,13 @@ import requests
 import seaborn as sns
 import io
 
-__version__ = '0.1.6'
+__version__ = '0.1.7'
 __author__ = "Amit Kapoor <amitkaps@gmail.com>"
 
 
 def plot_decision_boundaries(model, X, y,
     probability=False, show_input=False,
-    feature_names=None, class_names=None, alpha=0.5):
+    feature_names=None, class_names=None, alpha=0.5, size=30):
     """Plots the decision boundaries for a classifier with 2 features.
 
     This is good way to visualize the decision boundaries of various classifiers
@@ -33,12 +33,16 @@ def plot_decision_boundaries(model, X, y,
     :param feature_names: names of the columns; used to label the axes
     :param class_names: names of the classes; used to label the colorbar
     :param alpha: the alpha value for the plots
+    :param size: the size value for the input points
     """
     if isinstance(X, pd.DataFrame):
         # take feature names from the dataframe if possible
         if feature_names is None:
             feature_names = X.columns
         X = X.values
+    
+    if isinstance(y, pd.DataFrame):
+        y = y.values
 
     xx, yy = _make_mesh(X, y, n=100)
     Z = _predict_mesh(model, xx, yy, probability=probability)
@@ -65,10 +69,14 @@ def plot_decision_boundaries(model, X, y,
     colorbar = plt.colorbar(cs, ticks=ticks, label=label)
     if tick_labels is not None:
         colorbar.set_ticklabels(tick_labels)
+    
 
     if show_input:
-        plt.scatter(x = X[:,0], y = X[:,1], c=y,
-            s=20, cmap="magma", alpha=alpha)
+        colors = y
+        if colors.ndim == 2: 
+            colors = colors.reshape(-1)
+        plt.scatter(x = X[:,0], y = X[:,1], c=colors,
+            s=size, cmap="viridis", alpha=max(alpha, 0.5))
 
     if feature_names is not None:
         plt.xlabel(feature_names[0])
