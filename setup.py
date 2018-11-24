@@ -26,7 +26,8 @@ setup(
     'scikit-learn',
     'matplotlib',
     'requests',
-    'seaborn'
+    'seaborn',
+    'requests'
   ],
   py_modules=['modelvis'],
   author="Amit Kapoor",

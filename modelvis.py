@@ -11,7 +11,7 @@ import requests
 import seaborn as sns
 import io
 
-__version__ = '0.1.5'
+__version__ = '0.1.6'
 __author__ = "Amit Kapoor <amitkaps@gmail.com>"
 
 
@@ -38,7 +38,7 @@ def plot_decision_boundaries(model, X, y,
         # take feature names from the dataframe if possible
         if feature_names is None:
             feature_names = X.columns
-        X = X.as_matrix()
+        X = X.values
 
     xx, yy = _make_mesh(X, y, n=100)
     Z = _predict_mesh(model, xx, yy, probability=probability)
